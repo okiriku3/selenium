@@ -4,6 +4,9 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome import service as fs
 from selenium.webdriver import ChromeOptions
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from PIL import Image
+from io import BytesIO
 import time
 
 # Streamlitのヘッダーと説明
@@ -26,8 +29,8 @@ if st.button('ログイン'):
         # Yahoo Japanのログインページにアクセス
         driver.get('https://login.yahoo.co.jp/')
 
-        # メールアドレスの入力 (IDではなく、XPathまたは他の適切な方法で要素を見つける)
-        email_input = driver.find_element(By.XPATH, '//input[@name="login"]')
+        # メールアドレスの入力 (最新の識別子を確認する必要があります)
+        email_input = driver.find_element(By.XPATH, '//input[@name="username"]')
         email_input.send_keys(email)
         driver.find_element(By.ID, 'btnNext').click()
         time.sleep(5)
@@ -37,7 +40,8 @@ if st.button('ログイン'):
         sms_code = st.text_input('SMS認証コード')
 
         if sms_code:
-            sms_input = driver.find_element(By.ID, 'verificationCode')
+            # SMS認証コードの入力フィールドを確認する必要があります
+            sms_input = driver.find_element(By.XPATH, '//input[@name="verificationCode"]')
             sms_input.send_keys(sms_code)
             driver.find_element(By.ID, 'btnSubmit').click()
             time.sleep(5)
@@ -48,3 +52,4 @@ if st.button('ログイン'):
         st.error(f"ログインに失敗しました: {e}")
     finally:
         driver.quit()
+
