@@ -58,3 +58,12 @@ if press_button:
 
     # スクレピン完了したことをstreamlitアプリ上に表示する
     st.write("スクレイピング完了!!!")
+
+
+st.title('Selenium with Streamlit Cloud')
+if st.button('Get Website Title'):
+    try:
+        title = get_selenium_data()
+        st.write('Website title:', title)
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
