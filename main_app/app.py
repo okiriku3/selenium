@@ -64,14 +64,16 @@ if press_button:
     st.write("スクレイピング完了!!!")
 
 #below is by chatgpt
-import os
+import streamlit as st
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome import service as fs
+from selenium.webdriver import ChromeOptions
+from webdriver_manager.core.os_manager import ChromeType
+from selenium.webdriver.common.by import By
 from PIL import Image
 from io import BytesIO
 import time
-from webdriver_manager.chrome import ChromeDriverManager
 
 # Streamlitアプリの設定
 st.title('Ebookjapan Screenshot to PDF Converter')
@@ -87,20 +89,15 @@ if submit_button and book_url:
     # WebDriver Managerを使用してChromeDriverを自動インストール
     try:
         # ChromeDriverのパスを取得
-        chrome_driver_path = ChromeDriverManager().install()
+        chrome_service = fs.Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
 
         # Chromeオプションを設定
-        chrome_options = Options()
+        chrome_options = ChromeOptions()
         chrome_options.add_argument('--headless')
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('--disable-dev-shm-usage')
         chrome_options.add_argument('--disable-gpu')
         chrome_options.add_argument('--window-size=1920x1080')
-        chrome_options.add_argument('--single-process')
-        chrome_options.add_argument('--disable-extensions')
-
-        # ChromeDriverをサービスとして設定
-        chrome_service = Service(executable_path=chrome_driver_path)
 
         # ブラウザを起動
         driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
@@ -146,4 +143,3 @@ if submit_button and book_url:
 
     except Exception as e:
         st.error(f"Failed to start ChromeDriver: {e}")
-
