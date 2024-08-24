@@ -107,7 +107,7 @@ if submit_button and email and book_url:
         st.write(driver.page_source)
 
         # メールアドレスの入力
-        email_input = driver.find_element(By.ID, "login-username")
+        email_input = driver.find_element(By.ID, "login_handle")
         email_input.send_keys(email)
         email_input.send_keys(Keys.RETURN)
 
