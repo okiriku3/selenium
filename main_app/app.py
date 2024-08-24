@@ -19,7 +19,7 @@ press_button = st.button("スクレイピング開始")
 if press_button:
     # スクレイピングするwebサイトのURL
     #URL = "https://ohenziblog.com"
-    URL = https://furusato-iiyama.net/a278/
+    URL = "https://furusato-iiyama.net/a278/"
 
     # ドライバのオプション
     options = ChromeOptions()
