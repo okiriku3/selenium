@@ -71,6 +71,7 @@ from selenium.webdriver.chrome import service as fs
 from selenium.webdriver import ChromeOptions
 from webdriver_manager.core.os_manager import ChromeType
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from PIL import Image
 from io import BytesIO
 import time
@@ -79,12 +80,14 @@ import time
 st.title('Ebookjapan Screenshot to PDF Converter')
 
 # 入力フォーム
+email = st.text_input("Enter your ebookjapan email:", "")
+password = st.text_input("Enter your ebookjapan password:", "", type="password")
 book_url = st.text_input("Enter the URL of the ebook:", "")
 submit_button = st.button("Start Capturing")
 
-if submit_button and book_url:
+if submit_button and email and password and book_url:
     # Streamlit UIで実行中のメッセージ
-    st.write("Capturing pages... Please wait.")
+    st.write("Logging in and capturing pages... Please wait.")
 
     # WebDriver Managerを使用してChromeDriverを自動インストール
     try:
@@ -101,6 +104,23 @@ if submit_button and book_url:
 
         # ブラウザを起動
         driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
+
+        # ebookjapanのログインページにアクセス
+        driver.get("https://login.yahoo.co.jp/config/login")
+
+        # メールアドレスの入力
+        email_input = driver.find_element(By.ID, "login-username")
+        email_input.send_keys(email)
+        email_input.send_keys(Keys.RETURN)
+
+        time.sleep(2)  # パスワード入力画面に移動するまで待機
+
+        # パスワードの入力
+        password_input = driver.find_element(By.ID, "login-passwd")
+        password_input.send_keys(password)
+        password_input.send_keys(Keys.RETURN)
+
+        time.sleep(5)  # ログインが完了するまで待機
 
         # 書籍のURLを開く
         driver.get(book_url)
