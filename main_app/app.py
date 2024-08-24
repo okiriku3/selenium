@@ -104,7 +104,7 @@ if submit_button and email and book_url:
         # Yahoo! Japanのログインページにアクセス
         driver.get("https://login.yahoo.co.jp/config/login")
 
-        st.write(driver)
+        st.write(driver.page_source)
 
         # メールアドレスの入力
         email_input = driver.find_element(By.ID, "login-username")
