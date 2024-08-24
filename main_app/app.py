@@ -41,6 +41,7 @@ if press_button:
 
     # URLで指定したwebページを開く
     driver.get(URL)
+    #URLで指定したwebのタイトルを取得
 
     title = driver.title
 
@@ -61,11 +62,3 @@ if press_button:
     # スクレピン完了したことをstreamlitアプリ上に表示する
     st.write('Website title:', title)
     st.write("スクレイピング完了!!!")
-
-
-st.title('Selenium with Streamlit Cloud')
-if st.button('Get Website Title'):
-    try:
-        st.write('Website title:', title)
-    except Exception as e:
-        st.error(f"An error occurred: {e}")
