@@ -63,7 +63,7 @@ if press_button:
 st.title('Selenium with Streamlit Cloud')
 if st.button('Get Website Title'):
     try:
-        title = get_selenium_data()
+        title = driver.title
         st.write('Website title:', title)
     except Exception as e:
         st.error(f"An error occurred: {e}")
