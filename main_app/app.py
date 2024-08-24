@@ -62,3 +62,89 @@ if press_button:
     # スクレピン完了したことをstreamlitアプリ上に表示する
     st.write('Website title:', title)
     st.write("スクレイピング完了!!!")
+
+#below is by chatgpt
+import os
+import streamlit as st
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from PIL import Image
+from io import BytesIO
+import time
+from webdriver_manager.chrome import ChromeDriverManager
+
+# Streamlitアプリの設定
+st.title('Ebookjapan Screenshot to PDF Converter')
+
+# 入力フォーム
+book_url = st.text_input("Enter the URL of the ebook:", "")
+submit_button = st.button("Start Capturing")
+
+if submit_button and book_url:
+    # Streamlit UIで実行中のメッセージ
+    st.write("Capturing pages... Please wait.")
+
+    # WebDriver Managerを使用してChromeDriverを自動インストール
+    try:
+        # ChromeDriverのパスを取得
+        chrome_driver_path = ChromeDriverManager().install()
+
+        # Chromeオプションを設定
+        chrome_options = Options()
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--disable-dev-shm-usage')
+        chrome_options.add_argument('--disable-gpu')
+        chrome_options.add_argument('--window-size=1920x1080')
+        chrome_options.add_argument('--single-process')
+        chrome_options.add_argument('--disable-extensions')
+
+        # ChromeDriverをサービスとして設定
+        chrome_service = Service(executable_path=chrome_driver_path)
+
+        # ブラウザを起動
+        driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
+
+        # 書籍のURLを開く
+        driver.get(book_url)
+
+        # ページが完全にロードされるのを待機
+        time.sleep(5)
+
+        # 保存する画像リスト
+        images = []
+
+        # ページ送りとキャプチャのループ
+        while True:
+            # スクリーンショットを取得
+            screenshot = driver.get_screenshot_as_png()
+            image = Image.open(BytesIO(screenshot))
+            images.append(image)
+
+            try:
+                # 次のページボタンを探してクリック
+                next_button = driver.find_element(By.CLASS_NAME, 'next-button-class-name')  # 次のページボタンのクラス名を指定
+                next_button.click()
+            except:
+                # 次のページボタンが見つからない場合は最終ページと判断してループ終了
+                break
+
+            # ページが変わるまで待機
+            time.sleep(3)
+
+        # PDFとして保存
+        pdf_path = 'ebookjapan_screenshots.pdf'
+        images[0].save(pdf_path, save_all=True, append_images=images[1:], resolution=100.0)
+
+        # PDFダウンロードリンクの表示
+        st.success("PDF Capturing complete!")
+        with open(pdf_path, "rb") as file:
+            st.download_button(label="Download PDF", data=file, file_name="ebookjapan_screenshots.pdf", mime="application/pdf")
+        
+        # ブラウザを終了
+        driver.quit()
+
+    except Exception as e:
+        st.error(f"Failed to start ChromeDriver: {e}")
+
