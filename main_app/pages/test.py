@@ -12,7 +12,6 @@ st.write('Yahoo Japanのログイン情報を入力してください。')
 
 # ユーザーからの入力を取得
 email = st.text_input('Yahooメールアドレス')
-password = st.text_input('Yahooパスワード', type='password')
 
 if st.button('ログイン'):
     # WebDriverのセットアップ
@@ -31,12 +30,6 @@ if st.button('ログイン'):
         email_input = driver.find_element(By.XPATH, '//input[@name="login"]')
         email_input.send_keys(email)
         driver.find_element(By.ID, 'btnNext').click()
-        time.sleep(2)
-
-        # パスワードの入力
-        password_input = driver.find_element(By.ID, 'login-passwd')
-        password_input.send_keys(password)
-        driver.find_element(By.ID, 'btnSubmit').click()
         time.sleep(5)
 
         # SMS認証の処理
