@@ -42,6 +42,8 @@ if press_button:
     # URLで指定したwebページを開く
     driver.get(URL)
 
+    title = driver.title
+
     # webページ上のタイトル画像を取得
     img = driver.find_element(By.TAG_NAME, 'img')
     src = img.get_attribute('src')
@@ -63,7 +65,6 @@ if press_button:
 st.title('Selenium with Streamlit Cloud')
 if st.button('Get Website Title'):
     try:
-        title = driver.title
         st.write('Website title:', title)
     except Exception as e:
         st.error(f"An error occurred: {e}")
