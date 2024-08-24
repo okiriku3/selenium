@@ -81,14 +81,10 @@ st.title('Ebookjapan Screenshot to PDF Converter')
 
 # 入力フォーム
 email = st.text_input("Enter your Yahoo email:", "")
-sms_code = st.text_input("Enter the SMS code (you will receive it during login):", "")
 book_url = st.text_input("Enter the URL of the ebook:", "")
-submit_button = st.button("Start Capturing")
+submit_button = st.button("Send Email and Proceed to SMS Verification")
 
-if submit_button and email and sms_code and book_url:
-    # Streamlit UIで実行中のメッセージ
-    st.write("Logging in and capturing pages... Please wait.")
-
+if submit_button and email and book_url:
     # WebDriver Managerを使用してChromeDriverを自動インストール
     try:
         # ChromeDriverのパスを取得
@@ -113,53 +109,59 @@ if submit_button and email and sms_code and book_url:
         email_input.send_keys(email)
         email_input.send_keys(Keys.RETURN)
 
-        time.sleep(5)  # SMSコード入力画面に移動するまで待機
+        time.sleep(5)  # SMSが送信されるまで待機
 
-        # SMS認証コードの入力
-        sms_input = driver.find_element(By.ID, "verification-code")  # SMSコードの入力フィールドのIDを指定
-        sms_input.send_keys(sms_code)
-        sms_input.send_keys(Keys.RETURN)
+        # SMSコードの入力を求めるメッセージ
+        st.write("Check your phone for the SMS code and enter it below.")
+        sms_code = st.text_input("Enter the SMS code:", "")
+        verify_button = st.button("Verify SMS and Capture Pages")
 
-        time.sleep(5)  # 認証が完了するまで待機
+        if verify_button and sms_code:
+            # SMS認証コードの入力
+            sms_input = driver.find_element(By.ID, "verification-code")  # SMSコードの入力フィールドのIDを指定
+            sms_input.send_keys(sms_code)
+            sms_input.send_keys(Keys.RETURN)
 
-        # 書籍のURLを開く
-        driver.get(book_url)
+            time.sleep(5)  # 認証が完了するまで待機
 
-        # ページが完全にロードされるのを待機
-        time.sleep(5)
+            # 書籍のURLを開く
+            driver.get(book_url)
 
-        # 保存する画像リスト
-        images = []
+            # ページが完全にロードされるのを待機
+            time.sleep(5)
 
-        # ページ送りとキャプチャのループ
-        while True:
-            # スクリーンショットを取得
-            screenshot = driver.get_screenshot_as_png()
-            image = Image.open(BytesIO(screenshot))
-            images.append(image)
+            # 保存する画像リスト
+            images = []
 
-            try:
-                # 次のページボタンを探してクリック
-                next_button = driver.find_element(By.CLASS_NAME, 'next-button-class-name')  # 次のページボタンのクラス名を指定
-                next_button.click()
-            except:
-                # 次のページボタンが見つからない場合は最終ページと判断してループ終了
-                break
+            # ページ送りとキャプチャのループ
+            while True:
+                # スクリーンショットを取得
+                screenshot = driver.get_screenshot_as_png()
+                image = Image.open(BytesIO(screenshot))
+                images.append(image)
 
-            # ページが変わるまで待機
-            time.sleep(3)
+                try:
+                    # 次のページボタンを探してクリック
+                    next_button = driver.find_element(By.CLASS_NAME, 'next-button-class-name')  # 次のページボタンのクラス名を指定
+                    next_button.click()
+                except:
+                    # 次のページボタンが見つからない場合は最終ページと判断してループ終了
+                    break
 
-        # PDFとして保存
-        pdf_path = 'ebookjapan_screenshots.pdf'
-        images[0].save(pdf_path, save_all=True, append_images=images[1:], resolution=100.0)
+                # ページが変わるまで待機
+                time.sleep(3)
 
-        # PDFダウンロードリンクの表示
-        st.success("PDF Capturing complete!")
-        with open(pdf_path, "rb") as file:
-            st.download_button(label="Download PDF", data=file, file_name="ebookjapan_screenshots.pdf", mime="application/pdf")
-        
-        # ブラウザを終了
-        driver.quit()
+            # PDFとして保存
+            pdf_path = 'ebookjapan_screenshots.pdf'
+            images[0].save(pdf_path, save_all=True, append_images=images[1:], resolution=100.0)
+
+            # PDFダウンロードリンクの表示
+            st.success("PDF Capturing complete!")
+            with open(pdf_path, "rb") as file:
+                st.download_button(label="Download PDF", data=file, file_name="ebookjapan_screenshots.pdf", mime="application/pdf")
+            
+            # ブラウザを終了
+            driver.quit()
 
     except Exception as e:
         st.error(f"Failed to start ChromeDriver: {e}")
