@@ -81,12 +81,11 @@ st.title('Ebookjapan Screenshot to PDF Converter')
 
 # 入力フォーム
 email = st.text_input("Enter your Yahoo email:", "")
-password = st.text_input("Enter your Yahoo password:", "", type="password")
 sms_code = st.text_input("Enter the SMS code (you will receive it during login):", "")
 book_url = st.text_input("Enter the URL of the ebook:", "")
 submit_button = st.button("Start Capturing")
 
-if submit_button and email and password and book_url:
+if submit_button and email and sms_code and book_url:
     # Streamlit UIで実行中のメッセージ
     st.write("Logging in and capturing pages... Please wait.")
 
@@ -114,22 +113,14 @@ if submit_button and email and password and book_url:
         email_input.send_keys(email)
         email_input.send_keys(Keys.RETURN)
 
-        time.sleep(2)  # パスワード入力画面に移動するまで待機
-
-        # パスワードの入力
-        password_input = driver.find_element(By.ID, "login-passwd")
-        password_input.send_keys(password)
-        password_input.send_keys(Keys.RETURN)
-
-        time.sleep(5)  # ログインが完了するまで待機
+        time.sleep(5)  # SMSコード入力画面に移動するまで待機
 
         # SMS認証コードの入力
-        if sms_code:
-            sms_input = driver.find_element(By.ID, "verification-code")  # SMSコードの入力フィールドのIDを指定
-            sms_input.send_keys(sms_code)
-            sms_input.send_keys(Keys.RETURN)
+        sms_input = driver.find_element(By.ID, "verification-code")  # SMSコードの入力フィールドのIDを指定
+        sms_input.send_keys(sms_code)
+        sms_input.send_keys(Keys.RETURN)
 
-            time.sleep(5)  # 認証が完了するまで待機
+        time.sleep(5)  # 認証が完了するまで待機
 
         # 書籍のURLを開く
         driver.get(book_url)
