@@ -80,8 +80,9 @@ import time
 st.title('Ebookjapan Screenshot to PDF Converter')
 
 # 入力フォーム
-email = st.text_input("Enter your ebookjapan email:", "")
-password = st.text_input("Enter your ebookjapan password:", "", type="password")
+email = st.text_input("Enter your Yahoo email:", "")
+password = st.text_input("Enter your Yahoo password:", "", type="password")
+sms_code = st.text_input("Enter the SMS code (you will receive it during login):", "")
 book_url = st.text_input("Enter the URL of the ebook:", "")
 submit_button = st.button("Start Capturing")
 
@@ -105,7 +106,7 @@ if submit_button and email and password and book_url:
         # ブラウザを起動
         driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
 
-        # ebookjapanのログインページにアクセス
+        # Yahoo! Japanのログインページにアクセス
         driver.get("https://login.yahoo.co.jp/config/login")
 
         # メールアドレスの入力
@@ -121,6 +122,14 @@ if submit_button and email and password and book_url:
         password_input.send_keys(Keys.RETURN)
 
         time.sleep(5)  # ログインが完了するまで待機
+
+        # SMS認証コードの入力
+        if sms_code:
+            sms_input = driver.find_element(By.ID, "verification-code")  # SMSコードの入力フィールドのIDを指定
+            sms_input.send_keys(sms_code)
+            sms_input.send_keys(Keys.RETURN)
+
+            time.sleep(5)  # 認証が完了するまで待機
 
         # 書籍のURLを開く
         driver.get(book_url)
