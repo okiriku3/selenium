@@ -59,6 +59,7 @@ if press_button:
     driver.close()
 
     # スクレピン完了したことをstreamlitアプリ上に表示する
+    st.write('Website title:', title)
     st.write("スクレイピング完了!!!")
 
 
