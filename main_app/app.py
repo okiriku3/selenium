@@ -1,7 +1,7 @@
 # coding:utf-8
+#streamlitcloud でselenium使う方法￥
 #https://ohenziblog.com/streamlit_cloud_for_selenium/
 
-# 必要なパッケージのインポート
 import streamlit as st
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
